@@ -51,7 +51,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "mtg-collection-manager",
+        "title": "MTG Collection Manager",
         "width": 800
       }
     ]
