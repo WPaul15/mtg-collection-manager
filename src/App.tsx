@@ -2,86 +2,67 @@ import { Form, Formik } from 'formik';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import PrimeReact from 'primereact/api';
-import { AutoComplete } from 'primereact/autocomplete';
 import { Button } from 'primereact/button';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import './App.css';
-import { TextInput } from './components/form/CustomInputs';
+import ArtifactSymbol from './assets/artifact-symbol.svg';
+import CreatureSymbol from './assets/creature-symbol.svg';
+import { AutoCompleteInput, TextInput } from './components/form/CustomInputs';
 
 PrimeReact.ripple = true;
 
 interface Type {
   label: string;
-  value: string;
+}
+
+interface TypeGroup {
+  label: string;
+  icon: string;
+  items: Type[];
 }
 
 function App() {
-  const [types, setTypes] = useState<Type[]>([]);
-  const [filteredTypes, setFilteredTypes] = useState<Type[]>([]);
-  const [selectedType, setSelectedType] = useState<Type>();
-  const [selectedTypes, setSelectedTypes] = useState<Type[]>([]);
+  const [types, setTypes] = useState<TypeGroup[]>([]);
 
-  const creatureTypes: Type[] = [
-    { label: 'Advisor', value: 'Advisor' },
-    { label: 'Aetherborn', value: 'Aetherborn' },
-    { label: 'Alien', value: 'Alien' },
-    { label: 'Ally', value: 'Ally' },
-    { label: 'Angel', value: 'Angel' },
-    { label: 'Antelope', value: 'Antelope' },
-    { label: 'Ape', value: 'Ape' },
-    { label: 'Archer', value: 'Archer' },
-    { label: 'Archon', value: 'Archon' },
-    { label: 'Army', value: 'Army' },
-    { label: 'Artificer', value: 'Artificer' },
-    { label: 'Assassin', value: 'Assassin' },
-    { label: 'Assembly-Worker', value: 'Assembly-Worker' },
-    { label: 'Astartes', value: 'Astartes' },
+  const cardTypes: TypeGroup[] = [
+    {
+      label: 'Creature Types',
+      icon: CreatureSymbol,
+      items: [
+        { label: 'Advisor' },
+        { label: 'Aetherborn' },
+        { label: 'Alien' },
+        { label: 'Ally' },
+        { label: 'Angel' },
+        { label: 'Antelope' },
+        { label: 'Ape' },
+        { label: 'Archer' },
+        { label: 'Archon' },
+        { label: 'Army' },
+        { label: 'Artificer' },
+        { label: 'Assassin' },
+        { label: 'Assembly-Worker' },
+        { label: 'Astartes' },
+      ],
+    },
+    {
+      label: 'Artifact Types',
+      icon: ArtifactSymbol,
+      items: [{ label: 'Equipment' }, { label: 'Vehicle' }],
+    },
   ];
 
-  const groupedTypes = [{ label: 'Creature Types', items: creatureTypes }];
-
   useEffect(() => {
-    setTypes(creatureTypes);
+    setTypes(cardTypes);
   }, []);
 
-  const searchTypes = (event: { query: string }) => {
-    setTimeout(() => {
-      let _filteredTypes;
-
-      if (!event.query.trim().length) {
-        _filteredTypes = [...types];
-      } else {
-        _filteredTypes = types.filter((type) => {
-          return type.label.toLowerCase().startsWith(event.query.toLowerCase());
-        });
-      }
-
-      setFilteredTypes(_filteredTypes);
-    }, 250);
-  };
-
-  const searchGroupedTypes = (event: { query: string }) => {
-    const _filteredTypes = [];
-
-    for (const group of groupedTypes) {
-      const filteredItems = group.items.filter(
-        (item) => item.label.toLowerCase().indexOf(event.query.toLowerCase()) !== -1
-      );
-
-      if (filteredItems && filteredItems.length) {
-        _filteredTypes.push({ ...group, ...{ items: filteredItems } });
-      }
-    }
-
-    setFilteredTypes(_filteredTypes);
-  };
-
-  const groupedItemTemplate = (item: { label: string; items: Type[] }) => {
+  const groupedItemTemplate = (item: TypeGroup) => {
     return (
-      <div className="flex align-items-center country-item">
+      <div className="flex align-items-center">
+        <img src={item.icon} alt="" className="w-1rem mr-2" />
         <div>{item.label}</div>
       </div>
     );
@@ -92,17 +73,19 @@ function App() {
       initialValues={{
         cardName: '',
         oracleText: '',
-        types: [],
+        cardTypes: new Array<Type>(),
       }}
       validationSchema={Yup.object({
         cardName: Yup.string(),
         oracleText: Yup.string(),
-        types: Yup.array().of(
-          Yup.object().shape({
-            label: Yup.string(),
-            value: Yup.string(),
-          })
-        ),
+        cardTypes: Yup.array()
+          .of(
+            Yup.object().shape({
+              label: Yup.string(),
+              value: Yup.string(),
+            })
+          )
+          .required('required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -115,21 +98,17 @@ function App() {
         <div className="formgrid grid">
           <TextInput label="Card Name" name="cardName" />
           <TextInput label="Oracle Text" name="oracleText" />
-
-          <span className="field col-12 p-fluid w-full">
-            <AutoComplete
-              dropdown
-              // multiple
-              value={selectedType}
-              suggestions={filteredTypes}
-              completeMethod={searchTypes}
-              field="label"
-              optionGroupLabel="label"
-              optionGroupChildren="items"
-              optionGroupTemplate={groupedItemTemplate}
-              onChange={(event) => setSelectedType(event.value)}
-            />
-          </span>
+          <AutoCompleteInput
+            label="Card Types"
+            name="cardTypes"
+            dropdown
+            multiple
+            data={types}
+            field="label"
+            optionGroupLabel="label"
+            optionGroupChildren="items"
+            optionGroupTemplate={groupedItemTemplate}
+          />
         </div>
 
         <Button type="submit" label="Submit" />
