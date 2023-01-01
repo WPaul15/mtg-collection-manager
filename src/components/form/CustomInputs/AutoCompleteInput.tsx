@@ -32,10 +32,6 @@ export const AutoCompleteInput = <T extends Group | Item>({
   const id: string = props.id || props.name;
   const isInvalid = !!(meta.touched && meta.error);
 
-  useEffect(() => {
-    console.log({ selectedValues });
-  }, [selectedValues]);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instanceOfGroupArray = (obj: any[]): obj is Group[] => {
     return obj.length > 0 && 'items' in obj[0];
