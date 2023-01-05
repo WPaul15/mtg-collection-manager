@@ -9,8 +9,14 @@ import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import './App.css';
 import ArtifactSymbol from './assets/artifact-symbol.svg';
+import BlackManaSymbol from './assets/black-mana-symbol.svg';
+import BlueManaSymbol from './assets/blue-mana-symbol.svg';
+import ColorlessManaSymbol from './assets/colorless-mana-symbol.svg';
 import CreatureSymbol from './assets/creature-symbol.svg';
-import { AutoCompleteInput, TextInput } from './components/form/CustomInputs';
+import GreenManaSymbol from './assets/green-mana-symbol.svg';
+import RedManaSymbol from './assets/red-mana-symbol.svg';
+import WhiteManaSymbol from './assets/white-mana-symbol.svg';
+import { AutoCompleteInput, CheckboxInput, TextInput } from './components/form/CustomInputs';
 
 PrimeReact.ripple = true;
 
@@ -22,6 +28,21 @@ interface TypeGroup {
   label: string;
   icon: string;
   items: Type[];
+}
+
+interface ColorCheckboxOption {
+  label: string;
+  key: Color;
+  icon?: string;
+}
+
+enum Color {
+  WHITE = 'W',
+  BLUE = 'U',
+  BLACK = 'B',
+  RED = 'R',
+  GREEN = 'G',
+  COLORLESS = 'C',
 }
 
 function App() {
@@ -55,6 +76,15 @@ function App() {
     },
   ];
 
+  const options: ColorCheckboxOption[] = [
+    { label: 'White', key: Color.WHITE, icon: WhiteManaSymbol },
+    { label: 'Blue', key: Color.BLUE, icon: BlueManaSymbol },
+    { label: 'Black', key: Color.BLACK, icon: BlackManaSymbol },
+    { label: 'Red', key: Color.RED, icon: RedManaSymbol },
+    { label: 'Green', key: Color.GREEN, icon: GreenManaSymbol },
+    { label: 'Colorless', key: Color.COLORLESS, icon: ColorlessManaSymbol },
+  ];
+
   useEffect(() => {
     setTypes(cardTypes);
   }, []);
@@ -74,18 +104,18 @@ function App() {
         cardName: '',
         oracleText: '',
         cardTypes: new Array<Type>(),
+        colors: new Array<Color>(),
       }}
       validationSchema={Yup.object({
         cardName: Yup.string(),
         oracleText: Yup.string(),
-        cardTypes: Yup.array()
-          .of(
-            Yup.object().shape({
-              label: Yup.string(),
-              value: Yup.string(),
-            })
-          )
-          .required('required'),
+        cardTypes: Yup.array().of(
+          Yup.object().shape({
+            label: Yup.string(),
+            value: Yup.string(),
+          })
+        ),
+        colors: Yup.array(Yup.mixed<Color>().oneOf(Object.values(Color))),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -109,6 +139,7 @@ function App() {
             optionGroupChildren="items"
             optionGroupTemplate={groupedItemTemplate}
           />
+          <CheckboxInput label="Colors" name="colors" options={options} />
         </div>
 
         <Button type="submit" label="Submit" />
