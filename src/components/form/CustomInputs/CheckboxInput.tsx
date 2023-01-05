@@ -69,7 +69,9 @@ export const CheckboxInput = ({
                 className={classNames({ 'p-invalid': isInvalid })}
               />
               <label htmlFor={option.key} className="p-checkbox-label">
-                {option.icon && <img src={option.icon} alt="" className="w-1rem mr-2" aria-hidden />}
+                {option.icon && (
+                  <img src={option.icon} alt="" className="w-1rem mr-2  vertical-align-middle" aria-hidden />
+                )}
                 {option.label}
               </label>
             </div>
