@@ -3,7 +3,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { classNames } from 'primereact/utils';
 import { useState } from 'react';
 
-interface CheckboxInputProps {
+interface FormikCheckboxProps {
   label: string;
   options: CheckboxOption[];
   columnWidth?: number;
@@ -15,12 +15,12 @@ export interface CheckboxOption {
   icon?: string;
 }
 
-export const CheckboxInput = ({
+export const FormikCheckbox = ({
   label,
   options,
   columnWidth,
   ...props
-}: CheckboxInputProps & FieldHookConfig<string>) => {
+}: FormikCheckboxProps & FieldHookConfig<string>) => {
   const [field, meta] = useField(props);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 

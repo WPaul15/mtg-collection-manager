@@ -16,7 +16,7 @@ import CreatureSymbol from './assets/creature-symbol.svg';
 import GreenManaSymbol from './assets/green-mana-symbol.svg';
 import RedManaSymbol from './assets/red-mana-symbol.svg';
 import WhiteManaSymbol from './assets/white-mana-symbol.svg';
-import { AutoCompleteInput, CheckboxInput, TextInput } from './components/form/CustomInputs';
+import { FormikAutoComplete, FormikCheckbox, FormikText } from './components/form/FormikInputs';
 
 PrimeReact.ripple = true;
 
@@ -126,9 +126,9 @@ function App() {
     >
       <Form>
         <div className="formgrid grid">
-          <TextInput label="Card Name" name="cardName" />
-          <TextInput label="Oracle Text" name="oracleText" />
-          <AutoCompleteInput
+          <FormikText label="Card Name" name="cardName" />
+          <FormikText label="Oracle Text" name="oracleText" />
+          <FormikAutoComplete
             label="Card Types"
             name="cardTypes"
             dropdown
@@ -139,7 +139,7 @@ function App() {
             optionGroupChildren="items"
             optionGroupTemplate={groupedItemTemplate}
           />
-          <CheckboxInput label="Colors" name="colors" options={options} />
+          <FormikCheckbox label="Colors" name="colors" options={options} />
         </div>
 
         <Button type="submit" label="Submit" />

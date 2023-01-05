@@ -1,9 +1,9 @@
 import { FieldHookConfig, useField } from 'formik';
 import { AutoComplete, AutoCompleteProps } from 'primereact/autocomplete';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-interface AutoCompleteInputProps<T extends Group | Item> {
+interface FormikAutoCompleteProps<T extends Group | Item> {
   label: string;
   data: T[];
   columnWidth?: number;
@@ -19,12 +19,12 @@ interface Group {
   items: Item[];
 }
 
-export const AutoCompleteInput = <T extends Group | Item>({
+export const FormikAutoComplete = <T extends Group | Item>({
   label,
   data,
   columnWidth,
   ...props
-}: AutoCompleteInputProps<T> & FieldHookConfig<string> & AutoCompleteProps) => {
+}: FormikAutoCompleteProps<T> & FieldHookConfig<string> & AutoCompleteProps) => {
   const [field, meta] = useField(props);
   const [selectedValues, setSelectedValues] = useState<Item | Item[]>();
   const [filteredValues, setFilteredValues] = useState<T[]>([]);

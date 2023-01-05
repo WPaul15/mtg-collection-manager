@@ -2,12 +2,12 @@ import { FieldHookConfig, useField } from 'formik';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
-interface TextInputProps {
+interface FormikTextProps {
   label: string;
   columnWidth?: number;
 }
 
-export const TextInput = ({ label, columnWidth, ...props }: TextInputProps & FieldHookConfig<string>) => {
+export const FormikText = ({ label, columnWidth, ...props }: FormikTextProps & FieldHookConfig<string>) => {
   const [field, meta] = useField(props);
 
   const id: string = props.id || props.name;
