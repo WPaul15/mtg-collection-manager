@@ -9,7 +9,7 @@ interface FormikCheckboxProps {
   columnWidth?: number;
 }
 
-export interface CheckboxOption {
+interface CheckboxOption {
   label: string;
   key: string;
   icon?: string;
