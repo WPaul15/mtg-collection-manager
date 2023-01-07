@@ -16,7 +16,9 @@ import CreatureSymbol from './assets/creature-symbol.svg';
 import GreenManaSymbol from './assets/green-mana-symbol.svg';
 import RedManaSymbol from './assets/red-mana-symbol.svg';
 import WhiteManaSymbol from './assets/white-mana-symbol.svg';
-import { FormikAutoComplete, FormikCheckbox, FormikText } from './components/form/FormikInputs';
+import { FormikAutoComplete, FormikCheckbox, FormikDropdown, FormikText } from './components/form/FormikInputs';
+import { Dropdown } from 'primereact/dropdown';
+import { SelectItem } from 'primereact/selectitem';
 
 PrimeReact.ripple = true;
 
@@ -76,7 +78,7 @@ function App() {
     },
   ];
 
-  const options: ColorCheckboxOption[] = [
+  const colorOptions: ColorCheckboxOption[] = [
     { label: 'White', key: Color.WHITE, icon: WhiteManaSymbol },
     { label: 'Blue', key: Color.BLUE, icon: BlueManaSymbol },
     { label: 'Black', key: Color.BLACK, icon: BlackManaSymbol },
@@ -84,6 +86,8 @@ function App() {
     { label: 'Green', key: Color.GREEN, icon: GreenManaSymbol },
     { label: 'Colorless', key: Color.COLORLESS, icon: ColorlessManaSymbol },
   ];
+
+  const formatOptions: string[] = ['Standard', 'Historic', 'Modern', 'Commander', 'Brawl'];
 
   useEffect(() => {
     setTypes(cardTypes);
@@ -105,6 +109,7 @@ function App() {
         oracleText: '',
         cardTypes: new Array<Type>(),
         colors: new Array<Color>(),
+        format: '',
       }}
       validationSchema={Yup.object({
         cardName: Yup.string(),
@@ -116,6 +121,7 @@ function App() {
           })
         ),
         colors: Yup.array(Yup.mixed<Color>().oneOf(Object.values(Color))),
+        format: Yup.string(),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -139,7 +145,15 @@ function App() {
             optionGroupChildren="items"
             optionGroupTemplate={groupedItemTemplate}
           />
-          <FormikCheckbox label="Colors" name="colors" options={options} />
+          <FormikCheckbox label="Colors" name="colors" options={colorOptions} />
+          <FormikDropdown
+            label="Format"
+            name="format"
+            options={formatOptions}
+            filter
+            showFilterClear
+            filterMatchMode="startsWith"
+          />
         </div>
 
         <Button type="submit" label="Submit" />
