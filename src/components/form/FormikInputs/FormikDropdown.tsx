@@ -1,8 +1,6 @@
 import { FieldHookConfig, useField } from 'formik';
 import { Dropdown, DropdownProps } from 'primereact/dropdown';
-import { SelectItem } from 'primereact/selectitem';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
 
 interface FormikDropdownProps {
   label: string;

@@ -17,8 +17,6 @@ import GreenManaSymbol from './assets/green-mana-symbol.svg';
 import RedManaSymbol from './assets/red-mana-symbol.svg';
 import WhiteManaSymbol from './assets/white-mana-symbol.svg';
 import { FormikAutoComplete, FormikCheckbox, FormikDropdown, FormikText } from './components/form/FormikInputs';
-import { Dropdown } from 'primereact/dropdown';
-import { SelectItem } from 'primereact/selectitem';
 
 PrimeReact.ripple = true;
 
