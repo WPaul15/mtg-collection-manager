@@ -16,7 +16,13 @@ import CreatureSymbol from './assets/creature-symbol.svg';
 import GreenManaSymbol from './assets/green-mana-symbol.svg';
 import RedManaSymbol from './assets/red-mana-symbol.svg';
 import WhiteManaSymbol from './assets/white-mana-symbol.svg';
-import { FormikAutoComplete, FormikCheckbox, FormikDropdown, FormikText } from './components/form/FormikInputs';
+import {
+  FormikAutoComplete,
+  FormikCheckbox,
+  FormikDropdown,
+  FormikText,
+  FormikTextArea,
+} from './components/form/FormikInputs';
 
 PrimeReact.ripple = true;
 
@@ -108,6 +114,7 @@ function App() {
         cardTypes: new Array<Type>(),
         colors: new Array<Color>(),
         format: '',
+        query: '',
       }}
       validationSchema={Yup.object({
         cardName: Yup.string(),
@@ -120,6 +127,7 @@ function App() {
         ),
         colors: Yup.array(Yup.mixed<Color>().oneOf(Object.values(Color))),
         format: Yup.string(),
+        query: Yup.string(),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -152,6 +160,7 @@ function App() {
             showFilterClear
             filterMatchMode="startsWith"
           />
+          <FormikTextArea label="Query" name="query" />
         </div>
 
         <Button type="submit" label="Submit" />
