@@ -1,12 +1,13 @@
 import { PrimeReactProvider } from "primereact/api";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import "primeflex/primeflex.css";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/soho-light/theme.css";
 import "./main.css";
+import { routes } from "./view";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -15,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         ripple: true,
       }}
     >
-      <App />
+      <RouterProvider router={createBrowserRouter(routes)} />
     </PrimeReactProvider>
   </React.StrictMode>
 );
