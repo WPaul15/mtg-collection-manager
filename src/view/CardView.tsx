@@ -3,7 +3,7 @@ import { Divider } from 'primereact/divider';
 import { useScryfall } from '../providers/ScryfallProvider';
 
 export const CardView = () => {
-  const { searchCards, getRulings, getSet } = useScryfall();
+  const { searchCards, getRulings, getSet, getError } = useScryfall();
 
   const getAndLogCard = () => {
     searchCards().then((res) => {
@@ -23,6 +23,12 @@ export const CardView = () => {
     });
   };
 
+  const getAndLogError = () => {
+    getError().then((res) => {
+      console.log({ res });
+    });
+  };
+
   return (
     <div className="flex justify-content-center">
       <div className="flex-grow-1">
@@ -33,6 +39,7 @@ export const CardView = () => {
         <Button label="Solphim" onClick={getAndLogCard} />
         <Button label="Derevi's Rulings" onClick={getAndLogRulings} />
         <Button label="Aether Revolt" onClick={getAndLogSet} />
+        <Button label="Error" onClick={getAndLogError} />
       </div>
     </div>
   );

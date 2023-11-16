@@ -1,11 +1,23 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { createContext, PropsWithChildren, useContext } from 'react';
-import { Card, CardSchema, ListSchema, ListType, Ruling, RulingSchema, Set, SetSchema } from '../../schema';
+import {
+  Card,
+  CardSchema,
+  ListSchema,
+  ListType,
+  Ruling,
+  RulingSchema,
+  ScryfallError,
+  ScryfallErrorSchema,
+  Set,
+  SetSchema,
+} from '../../schema';
 
 interface ScryfallContextProps {
   searchCards: () => Promise<ListType<Card>>;
   getRulings: () => Promise<ListType<Ruling>>;
   getSet: () => Promise<Set>;
+  getError: () => Promise<ScryfallError>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -32,10 +44,18 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     return SetSchema.parse(res.data);
   };
 
+  const getError = async (): Promise<ScryfallError> => {
+    const res = await scryfallApi.get('/cards/search?q=is%3Aslick+cmc%3Ecmc').catch((err: AxiosError) => {
+      return err.response?.data;
+    });
+    return ScryfallErrorSchema.parse(res);
+  };
+
   const value = {
     searchCards,
     getRulings,
     getSet,
+    getError,
   };
 
   return <ScryfallContext.Provider value={value}>{children}</ScryfallContext.Provider>;
