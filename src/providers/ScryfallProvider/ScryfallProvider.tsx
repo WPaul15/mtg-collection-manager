@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { createContext, PropsWithChildren, useContext } from 'react';
-import { Card, CardSchema, ListSchema, ListType, Ruling, RulingSchema } from '../../schema';
+import { Card, CardSchema, ListSchema, ListType, Ruling, RulingSchema, Set, SetSchema } from '../../schema';
 
 interface ScryfallContextProps {
   searchCards: () => Promise<ListType<Card>>;
   getRulings: () => Promise<ListType<Ruling>>;
+  getSet: () => Promise<Set>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -26,9 +27,15 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     return ListSchema(RulingSchema).parse(res.data);
   };
 
+  const getSet = async (): Promise<Set> => {
+    const res = await scryfallApi.get('/sets/aer');
+    return SetSchema.parse(res.data);
+  };
+
   const value = {
     searchCards,
     getRulings,
+    getSet,
   };
 
   return <ScryfallContext.Provider value={value}>{children}</ScryfallContext.Provider>;
