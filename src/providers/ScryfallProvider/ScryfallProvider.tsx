@@ -3,6 +3,8 @@ import { createContext, PropsWithChildren, useContext } from 'react';
 import {
   Card,
   CardSchema,
+  CardSymbol,
+  CardSymbolSchema,
   ListSchema,
   ListType,
   Ruling,
@@ -18,6 +20,7 @@ interface ScryfallContextProps {
   getRulings: () => Promise<ListType<Ruling>>;
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
+  getAllCardSymbols: () => Promise<ListType<CardSymbol>>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -51,11 +54,17 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     return ScryfallErrorSchema.parse(res);
   };
 
+  const getAllCardSymbols = async (): Promise<ListType<CardSymbol>> => {
+    const res = await scryfallApi.get('/symbology');
+    return ListSchema(CardSymbolSchema).parse(res.data);
+  };
+
   const value = {
     searchCards,
     getRulings,
     getSet,
     getError,
+    getAllCardSymbols,
   };
 
   return <ScryfallContext.Provider value={value}>{children}</ScryfallContext.Provider>;
