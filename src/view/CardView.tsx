@@ -3,10 +3,12 @@ import { Divider } from 'primereact/divider';
 import { useScryfall } from '../providers/ScryfallProvider';
 
 export const CardView = () => {
-  const { searchCards, getRulings, getSet, getError } = useScryfall();
+  const { getCardsByQuery, getRulings, getSet, getError } = useScryfall();
 
   const getAndLogCard = () => {
-    searchCards().then((res) => {
+    getCardsByQuery({
+      q: 'solphim',
+    }).then((res) => {
       console.log({ res });
     });
   };

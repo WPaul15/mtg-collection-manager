@@ -17,9 +17,10 @@ import {
   Set,
   SetSchema,
 } from '../../schema';
+import { CardQuery } from '../../types/CardQuery';
 
 interface ScryfallContextProps {
-  searchCards: () => Promise<List<Card>>;
+  getCardsByQuery: (query: CardQuery) => Promise<List<Card>>;
   getRulings: () => Promise<List<Ruling>>;
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
@@ -53,11 +54,9 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     }
   };
 
-  const searchCards = (): Promise<List<Card>> => {
+  const getCardsByQuery = ({ ...query }: CardQuery): Promise<List<Card>> => {
     return get(ListSchema(CardSchema), '/cards/search', {
-      params: {
-        q: 'solphim',
-      },
+      params: { ...query },
     });
   };
 
@@ -86,7 +85,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
   };
 
   const value = {
-    searchCards,
+    getCardsByQuery,
     getRulings,
     getSet,
     getError,
