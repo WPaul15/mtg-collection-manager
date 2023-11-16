@@ -1,5 +1,5 @@
-import axios, { AxiosError } from 'axios';
-import { createContext, PropsWithChildren, useContext } from 'react';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { PropsWithChildren, createContext, useContext } from 'react';
 import { ZodTypeAny } from 'zod';
 import {
   Card,
@@ -8,6 +8,8 @@ import {
   CardSymbolSchema,
   List,
   ListSchema,
+  ManaCost,
+  ManaCostSchema,
   Ruling,
   RulingSchema,
   ScryfallError,
@@ -22,6 +24,7 @@ interface ScryfallContextProps {
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
   getAllCardSymbols: () => Promise<List<CardSymbol>>;
+  parseMana: (cost: string) => Promise<ManaCost>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -33,36 +36,53 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     baseURL: 'https://api.scryfall.com',
   });
 
-  const get = <T extends ZodTypeAny>(endpoint: string, schema: T): Promise<any> => {
-    return scryfallApi
-      .get(endpoint)
-      .then((res) => {
-        return schema.parse(res.data);
-      })
-      .catch((err: AxiosError) => {
+  const get = async <T extends ZodTypeAny>(
+    schema: T,
+    endpoint: string,
+    config?: AxiosRequestConfig<any>
+  ): Promise<any> => {
+    try {
+      const res = await scryfallApi.get(endpoint, config);
+      return schema.parse(res.data);
+    } catch (err) {
+      if (err instanceof AxiosError) {
         return ScryfallErrorSchema.parse(err.response?.data);
-      });
+      }
+
+      console.error({ err });
+    }
   };
 
-  const searchCards = async (): Promise<List<Card>> => {
-    return get('/cards/search?q=solphim', ListSchema(CardSchema));
+  const searchCards = (): Promise<List<Card>> => {
+    return get(ListSchema(CardSchema), '/cards/search', {
+      params: {
+        q: 'solphim',
+      },
+    });
   };
 
-  const getRulings = async (): Promise<List<Ruling>> => {
-    return get('/cards/cma/176/rulings', ListSchema(RulingSchema));
+  const getRulings = (): Promise<List<Ruling>> => {
+    return get(ListSchema(RulingSchema), '/cards/cma/176/rulings');
   };
 
-  const getSet = async (): Promise<Set> => {
-    return get('/sets/aer', SetSchema);
+  const getSet = (): Promise<Set> => {
+    return get(SetSchema, '/sets/aer');
   };
 
-  const getError = async (): Promise<ScryfallError> => {
-    return get('/cards/search?q=is%3Aslick+cmc%3Ecmc', ListSchema(CardSchema));
+  const getError = (): Promise<ScryfallError> => {
+    return get(ListSchema(CardSchema), '/cards/search?q=is%3Aslick+cmc%3Ecmc');
   };
 
-  const getAllCardSymbols = async (): Promise<List<CardSymbol>> => {
-    const res = await scryfallApi.get('/symbology');
-    return ListSchema(CardSymbolSchema).parse(res.data);
+  const getAllCardSymbols = (): Promise<List<CardSymbol>> => {
+    return get(ListSchema(CardSymbolSchema), '/symbology');
+  };
+
+  const parseMana = (cost: string): Promise<ManaCost> => {
+    return get(ManaCostSchema, '/symbology/parse-mana', {
+      params: {
+        cost,
+      },
+    });
   };
 
   const value = {
@@ -71,6 +91,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     getSet,
     getError,
     getAllCardSymbols,
+    parseMana,
   };
 
   return <ScryfallContext.Provider value={value}>{children}</ScryfallContext.Provider>;
