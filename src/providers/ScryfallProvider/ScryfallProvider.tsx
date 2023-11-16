@@ -1,12 +1,13 @@
 import axios, { AxiosError } from 'axios';
 import { createContext, PropsWithChildren, useContext } from 'react';
+import { ZodTypeAny } from 'zod';
 import {
   Card,
   CardSchema,
   CardSymbol,
   CardSymbolSchema,
+  List,
   ListSchema,
-  ListType,
   Ruling,
   RulingSchema,
   ScryfallError,
@@ -16,11 +17,11 @@ import {
 } from '../../schema';
 
 interface ScryfallContextProps {
-  searchCards: () => Promise<ListType<Card>>;
-  getRulings: () => Promise<ListType<Ruling>>;
+  searchCards: () => Promise<List<Card>>;
+  getRulings: () => Promise<List<Ruling>>;
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
-  getAllCardSymbols: () => Promise<ListType<CardSymbol>>;
+  getAllCardSymbols: () => Promise<List<CardSymbol>>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -32,29 +33,34 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     baseURL: 'https://api.scryfall.com',
   });
 
-  const searchCards = async (): Promise<ListType<Card>> => {
-    const res = await scryfallApi.get(`/cards/search?q=solphim`);
-    return ListSchema(CardSchema).parse(res.data);
+  const get = <T extends ZodTypeAny>(endpoint: string, schema: T): Promise<any> => {
+    return scryfallApi
+      .get(endpoint)
+      .then((res) => {
+        return schema.parse(res.data);
+      })
+      .catch((err: AxiosError) => {
+        return ScryfallErrorSchema.parse(err.response?.data);
+      });
   };
 
-  const getRulings = async (): Promise<ListType<Ruling>> => {
-    const res = await scryfallApi.get('/cards/cma/176/rulings');
-    return ListSchema(RulingSchema).parse(res.data);
+  const searchCards = async (): Promise<List<Card>> => {
+    return get('/cards/search?q=solphim', ListSchema(CardSchema));
+  };
+
+  const getRulings = async (): Promise<List<Ruling>> => {
+    return get('/cards/cma/176/rulings', ListSchema(RulingSchema));
   };
 
   const getSet = async (): Promise<Set> => {
-    const res = await scryfallApi.get('/sets/aer');
-    return SetSchema.parse(res.data);
+    return get('/sets/aer', SetSchema);
   };
 
   const getError = async (): Promise<ScryfallError> => {
-    const res = await scryfallApi.get('/cards/search?q=is%3Aslick+cmc%3Ecmc').catch((err: AxiosError) => {
-      return err.response?.data;
-    });
-    return ScryfallErrorSchema.parse(res);
+    return get('/cards/search?q=is%3Aslick+cmc%3Ecmc', ListSchema(CardSchema));
   };
 
-  const getAllCardSymbols = async (): Promise<ListType<CardSymbol>> => {
+  const getAllCardSymbols = async (): Promise<List<CardSymbol>> => {
     const res = await scryfallApi.get('/symbology');
     return ListSchema(CardSymbolSchema).parse(res.data);
   };

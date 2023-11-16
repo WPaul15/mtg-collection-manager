@@ -13,6 +13,6 @@ const ListSchema = <E extends ZodType>(dataSchema: E) =>
     })
     .transform(camelize);
 
-type ListType<E> = z.infer<ReturnType<typeof ListSchema<ZodType<E>>>>;
+type List<E> = z.infer<ReturnType<typeof ListSchema<ZodType<E>>>>;
 
-export { ListSchema, type ListType };
+export { ListSchema, type List };
