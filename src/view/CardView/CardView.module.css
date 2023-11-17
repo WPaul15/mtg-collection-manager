@@ -1,0 +1,11 @@
+.cardImage > img {
+  height: 400px;
+  width: 300px;
+}
+
+@media (min-width: 350px) {
+  .cardImage > img {
+    height: 468px;
+    width: 336px;
+  }
+}

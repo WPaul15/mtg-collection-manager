@@ -6,7 +6,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import 'primeflex/primeflex.css';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/soho-light/theme.css';
-import './main.css';
+import './main.scss';
 import { ScryfallProvider } from './providers/ScryfallProvider';
 import { routes } from './view';
 

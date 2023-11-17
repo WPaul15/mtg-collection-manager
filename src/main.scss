@@ -1,0 +1,47 @@
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-weight: normal;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+#root {
+  margin: 1.5rem !important;
+}
+
+.card-symbol {
+  margin: 1px 1px -1px 1px;
+  height: 15px;
+  width: 15px;
+  display: inline-block;
+  text-indent: -999em;
+  background-size: 100% 100%;
+  background-position: top left;
+  background-repeat: no-repeat;
+  border-radius: 500px;
+  cursor: help;
+
+  & + .card-symbol {
+    margin-left: 2px;
+  }
+}
+
+$symbols: T, Q, E, PW, CHAOS, A, TK, X, Y, Z, 0, HALF, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+  20, 100, 1000000, INFINITY, WU, WB, BR, BG, UB, UR, RG, RW, GW, GU, BGP, BRP, GUP, GWP, RGP, RWP, UBP, URP, WBP, WUP,
+  2W, 2U, 2B, 2R, 2G, P, WP, UP, BP, RP, GP, HW, HR, W, U, B, R, G, C, S;
+
+@each $symbol in $symbols {
+  .card-symbol-#{to-lower-case(#{$symbol})} {
+    background-image: url(./assets/svg/#{$symbol}.svg);
+  }
+}

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { PropsWithChildren, createContext, useContext } from 'react';
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
+import reactStringReplace from 'react-string-replace';
 import { ZodTypeAny } from 'zod';
 import {
   Card,
@@ -19,13 +20,21 @@ import {
 } from '../../schema';
 import { CardQuery } from '../../types/CardQuery';
 
+interface SymbolMapValue extends CardSymbol {
+  className: string;
+}
+
+interface SymbolMap {
+  [key: string]: SymbolMapValue;
+}
+
 interface ScryfallContextProps {
   getCardsByQuery: (query: CardQuery) => Promise<List<Card>>;
   getRulings: () => Promise<List<Ruling>>;
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
-  getAllCardSymbols: () => Promise<List<CardSymbol>>;
   parseMana: (cost: string) => Promise<ManaCost>;
+  replaceSymbols: (s: string | null | undefined) => ReturnType<typeof reactStringReplace>;
 }
 
 const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContextProps);
@@ -33,6 +42,8 @@ const ScryfallContext = createContext<ScryfallContextProps>({} as ScryfallContex
 interface ScryfallProviderProps {}
 
 export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProviderProps>) => {
+  const [cardSymbols, setCardSymbols] = useState<SymbolMap>({});
+
   const scryfallApi = axios.create({
     baseURL: 'https://api.scryfall.com',
   });
@@ -54,6 +65,27 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     }
   };
 
+  const getAllCardSymbols = (): Promise<List<CardSymbol>> => {
+    return get(ListSchema(CardSymbolSchema), '/symbology');
+  };
+
+  useEffect(() => {
+    getAllCardSymbols().then((symbols) => {
+      const map: SymbolMap = {};
+      symbols.data.forEach((symbol) => {
+        const className =
+          symbol.svgUri
+            ?.substring(symbol.svgUri?.lastIndexOf('/') + 1)
+            .replace(/\.svg/, '')
+            .toLowerCase() || '';
+
+        map[`${symbol.symbol}`] = { ...symbol, className };
+      });
+
+      setCardSymbols(map);
+    });
+  }, []);
+
   const getCardsByQuery = ({ ...query }: CardQuery): Promise<List<Card>> => {
     return get(ListSchema(CardSchema), '/cards/search', {
       params: { ...query },
@@ -72,10 +104,6 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     return get(ListSchema(CardSchema), '/cards/search?q=is%3Aslick+cmc%3Ecmc');
   };
 
-  const getAllCardSymbols = (): Promise<List<CardSymbol>> => {
-    return get(ListSchema(CardSymbolSchema), '/symbology');
-  };
-
   const parseMana = (cost: string): Promise<ManaCost> => {
     return get(ManaCostSchema, '/symbology/parse-mana', {
       params: {
@@ -84,13 +112,34 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     });
   };
 
+  const replaceSymbols = (s: string | null | undefined): ReturnType<typeof reactStringReplace> => {
+    if (!s) {
+      return [];
+    }
+
+    return reactStringReplace(s, /(\{[^}]+\})/g, (match, i) => {
+      const symbol = cardSymbols[match];
+
+      return (
+        <abbr
+          key={i}
+          title={symbol.english}
+          aria-label={symbol.english}
+          className={`card-symbol card-symbol-${symbol.className} shadow-2 overflow-hidden`}
+        >
+          {match}
+        </abbr>
+      );
+    });
+  };
+
   const value = {
     getCardsByQuery,
     getRulings,
     getSet,
     getError,
-    getAllCardSymbols,
     parseMana,
+    replaceSymbols,
   };
 
   return <ScryfallContext.Provider value={value}>{children}</ScryfallContext.Provider>;

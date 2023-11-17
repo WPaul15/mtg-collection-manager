@@ -1,0 +1,79 @@
+import { Button } from 'primereact/button';
+import { Divider } from 'primereact/divider';
+import { Image } from 'primereact/image';
+import { ReactNode, useState } from 'react';
+import { useScryfall } from '../../providers/ScryfallProvider';
+
+import { Card as PRCard } from 'primereact/card';
+import { Card } from '../../schema';
+import { CardQuery } from '../../types/CardQuery';
+import styles from './CardView.module.css';
+
+interface StatLineProps {
+  title: string;
+  value: ReactNode | ReactNode[];
+}
+
+const StatLine = ({ title, value }: StatLineProps) => {
+  return (
+    <p className="m-0">
+      <span className="font-bold">{title}</span> | {value}
+    </p>
+  );
+};
+
+export const CardView = () => {
+  const [card, setCard] = useState<Card>();
+  const { getCardsByQuery, replaceSymbols } = useScryfall();
+
+  const getCard = (query: CardQuery) => {
+    getCardsByQuery(query).then((cards) => {
+      console.log({ cards });
+      setCard(cards.data[0]);
+    });
+  };
+
+  return (
+    <div className="flex justify-content-center">
+      <div className="flex-grow-1">
+        <Button
+          label="Mondrak"
+          onClick={() => {
+            getCard({ q: 'mondrak' });
+          }}
+        />
+        <Button
+          label="Solphim"
+          onClick={() => {
+            getCard({ q: 'solphim' });
+          }}
+        />
+        {card && (
+          <PRCard title={card.name} subTitle={card.typeLine}>
+            <StatLine title="Mana Cost" value={replaceSymbols(card.manaCost)} />
+            <Divider />
+            {card.oracleText?.split('\n').map((line, i) => {
+              return (
+                <p key={i} className={`m-0 mb-3`}>
+                  {replaceSymbols(line)}
+                </p>
+              );
+            })}
+            <Divider />
+            {card.typeLine.match(/Creature/) && (
+              <>
+                <StatLine title="Power / Toughness" value={`${card.power} / ${card.toughness}`} />
+                <Divider />
+              </>
+            )}
+            <StatLine title={card.setName} value={`#${card.collectorNumber}`} />
+            <Divider />
+            <StatLine title="Artist" value={card.artist} />
+          </PRCard>
+        )}
+      </div>
+      <Divider layout="vertical" />
+      <div className="flex-grow-1">{card && <Image src={card.imageUris?.png} className={styles.cardImage} />}</div>
+    </div>
+  );
+};
