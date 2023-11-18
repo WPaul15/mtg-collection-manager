@@ -48,6 +48,12 @@ export const CardView = () => {
             getCard({ q: 'solphim' });
           }}
         />
+        <Button
+          label="Liliana"
+          onClick={() => {
+            getCard({ q: 'liliana of the veil' });
+          }}
+        />
         {card && (
           <PRCard title={card.name} subTitle={card.typeLine}>
             <StatLine title="Mana Cost" value={replaceSymbols(card.manaCost)} />
@@ -63,6 +69,12 @@ export const CardView = () => {
             {card.typeLine.match(/Creature/) && (
               <>
                 <StatLine title="Power / Toughness" value={`${card.power} / ${card.toughness}`} />
+                <Divider />
+              </>
+            )}
+            {card.typeLine.match(/Planeswalker/) && (
+              <>
+                <StatLine title="Loyalty" value={card.loyalty} />
                 <Divider />
               </>
             )}
