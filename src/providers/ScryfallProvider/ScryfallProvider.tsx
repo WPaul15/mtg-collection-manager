@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 import reactStringReplace from 'react-string-replace';
 import { ZodTypeAny } from 'zod';
+import * as symbology from '../../data/symbology.json';
 import {
   Card,
   CardSchema,
@@ -66,7 +67,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
   };
 
   const getAllCardSymbols = (): Promise<List<CardSymbol>> => {
-    return get(ListSchema(CardSymbolSchema), '/symbology');
+    return Promise.resolve(ListSchema(CardSymbolSchema).parse(symbology));
   };
 
   useEffect(() => {
