@@ -78,7 +78,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
           symbol.svgUri
             ?.substring(symbol.svgUri?.lastIndexOf('/') + 1)
             .replace(/\.svg/, '')
-            .toLowerCase() || '';
+            .toLocaleLowerCase() || '';
 
         map[`${symbol.symbol}`] = { ...symbol, className };
       });
@@ -126,7 +126,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
           key={i}
           title={symbol.english}
           aria-label={symbol.english}
-          className={`card-symbol card-symbol-${symbol.className} shadow-2 overflow-hidden`}
+          className={`card-symbol card-symbol-${symbol.className} overflow-hidden`}
         >
           {match}
         </abbr>
