@@ -1,14 +1,14 @@
-import { z } from 'zod';
+import { EnumValue, createEnumSchema } from './EnumSchema';
 
-enum Rarity {
-  Common = 'common',
-  Uncommon = 'uncommon',
-  Rare = 'rare',
-  MythicRare = 'mythic',
-  Special = 'special',
-  Bonus = 'bonus',
-}
+const Rarity: Record<string, EnumValue> = {
+  COMMON: { apiValue: 'common', displayValue: 'Common' },
+  UNCOMMON: { apiValue: 'uncommon', displayValue: 'Uncommon' },
+  RARE: { apiValue: 'rare', displayValue: 'Rare' },
+  MYTHIC: { apiValue: 'mythic', displayValue: 'Mythic Rare' },
+  SPECIAL: { apiValue: 'special', displayValue: 'Special' },
+  BONUS: { apiValue: 'bonus', displayValue: 'Bonus' },
+} as const;
 
-const RaritySchema = z.nativeEnum(Rarity);
+const RaritySchema = createEnumSchema(Rarity);
 
 export { Rarity, RaritySchema };

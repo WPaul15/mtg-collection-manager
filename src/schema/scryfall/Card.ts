@@ -4,6 +4,7 @@ import { CardFaceSchema } from './CardFace';
 import { RelatedCardSchema } from './RelatedCard';
 import { BorderSchema } from './enum/Border';
 import { ColorSchema } from './enum/Color';
+import { getEnumValue } from './enum/EnumSchema';
 import { FinishSchema } from './enum/Finish';
 import { FormatSchema } from './enum/Format';
 import { FrameSchema } from './enum/Frame';
@@ -15,7 +16,7 @@ import { LanguageSchema } from './enum/Language';
 import { LayoutSchema } from './enum/Layout';
 import { LegalitySchema } from './enum/Legality';
 import { PriceSchema } from './enum/Price';
-import { RaritySchema } from './enum/Rarity';
+import { Rarity, RaritySchema } from './enum/Rarity';
 import { SecurityStampSchema } from './enum/SecurityStamp';
 
 const CardSchema = z
@@ -110,7 +111,10 @@ const CardSchema = z
     'preview.source_uri': z.string().url().nullish(),
     'preview.source': z.string().nullish(),
   })
-  .transform(camelize);
+  .transform(camelize)
+  .transform((card) => {
+    return { ...card, rarity: getEnumValue(card.rarity, Rarity) };
+  });
 
 type Card = z.infer<typeof CardSchema>;
 

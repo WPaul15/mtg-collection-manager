@@ -78,7 +78,10 @@ export const CardView = () => {
                 <Divider />
               </>
             )}
-            <StatLine title={card.setName} value={`#${card.collectorNumber}`} />
+            <StatLine
+              title={`${card.setName} (${card.set.toLocaleUpperCase()})`}
+              value={`#${card.collectorNumber} | ${card.rarity.displayValue}`}
+            />
             <Divider />
             <StatLine title="Artist" value={card.artist} />
           </PRCard>
