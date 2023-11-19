@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       }}
     >
       <ScryfallProvider>
-        <RouterProvider router={createBrowserRouter(routes)} />
+        <RouterProvider router={createBrowserRouter(Object.values(routes))} />
       </ScryfallProvider>
     </PrimeReactProvider>
   </React.StrictMode>
