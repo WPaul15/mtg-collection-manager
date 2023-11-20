@@ -19,7 +19,7 @@ import {
   Set,
   SetSchema,
 } from '../../schema';
-import { CardQuery } from '../../types/CardQuery';
+import { CardCollectionRequest, CardQueryRequest } from '../../types/request';
 
 interface SymbolMapValue extends CardSymbol {
   className: string;
@@ -30,7 +30,8 @@ interface SymbolMap {
 }
 
 interface ScryfallContextProps {
-  getCardsByQuery: (query: CardQuery) => Promise<List<Card>>;
+  getCardsByQuery: (query: CardQueryRequest) => Promise<List<Card>>;
+  getCardsByCollection: (body: CardCollectionRequest) => Promise<List<Card>>;
   getRulings: () => Promise<List<Ruling>>;
   getSet: () => Promise<Set>;
   getError: () => Promise<ScryfallError>;
@@ -47,15 +48,14 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
 
   const scryfallApi = axios.create({
     baseURL: 'https://api.scryfall.com',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
-  const get = async <T extends ZodTypeAny>(
-    schema: T,
-    endpoint: string,
-    config?: AxiosRequestConfig<any>
-  ): Promise<any> => {
+  const request = async <T extends ZodTypeAny>(schema: T, config: AxiosRequestConfig<any>): Promise<any> => {
     try {
-      const res = await scryfallApi.get(endpoint, config);
+      const res = await scryfallApi.request({ ...config, method: config.method || 'GET' });
       return schema.parse(res.data);
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -87,26 +87,38 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
     });
   }, []);
 
-  const getCardsByQuery = ({ ...query }: CardQuery): Promise<List<Card>> => {
-    return get(ListSchema(CardSchema), '/cards/search', {
+  const getCardsByQuery = ({ ...query }: CardQueryRequest): Promise<List<Card>> => {
+    return request(ListSchema(CardSchema), {
+      url: '/cards/search',
       params: { ...query },
     });
   };
 
+  const getCardsByCollection = ({ ...body }: CardCollectionRequest): Promise<List<Card>> => {
+    return request(ListSchema(CardSchema), {
+      method: 'POST',
+      url: '/card/collection',
+      data: {
+        ...body,
+      },
+    });
+  };
+
   const getRulings = (): Promise<List<Ruling>> => {
-    return get(ListSchema(RulingSchema), '/cards/cma/176/rulings');
+    return request(ListSchema(RulingSchema), { url: '/cards/cma/176/rulings' });
   };
 
   const getSet = (): Promise<Set> => {
-    return get(SetSchema, '/sets/aer');
+    return request(SetSchema, { url: '/sets/aer' });
   };
 
   const getError = (): Promise<ScryfallError> => {
-    return get(ListSchema(CardSchema), '/cards/search?q=is%3Aslick+cmc%3Ecmc');
+    return request(ListSchema(CardSchema), { url: '/cards/search?q=is%3Aslick+cmc%3Ecmc' });
   };
 
   const parseMana = (cost: string): Promise<ManaCost> => {
-    return get(ManaCostSchema, '/symbology/parse-mana', {
+    return request(ManaCostSchema, {
+      url: '/symbology/parse-mana',
       params: {
         cost,
       },
@@ -136,6 +148,7 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
 
   const value = {
     getCardsByQuery,
+    getCardsByCollection,
     getRulings,
     getSet,
     getError,

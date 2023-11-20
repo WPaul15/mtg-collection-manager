@@ -28,7 +28,7 @@ enum SortDirection {
   Desc = 'desc',
 }
 
-interface CardQuery {
+interface CardQueryRequest {
   q: string;
   unique?: UniqueMode;
   order?: SortOrder;
@@ -41,4 +41,4 @@ interface CardQuery {
   pretty?: boolean;
 }
 
-export { SortDirection, SortOrder, UniqueMode, type CardQuery };
+export { SortDirection, SortOrder, UniqueMode, type CardQueryRequest };

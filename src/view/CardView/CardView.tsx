@@ -6,7 +6,7 @@ import { useScryfall } from '../../providers/ScryfallProvider';
 
 import { Card as PRCard } from 'primereact/card';
 import { Card } from '../../schema';
-import { CardQuery } from '../../types/CardQuery';
+import { CardQueryRequest } from '../../types/request';
 import styles from './CardView.module.css';
 
 interface StatLineProps {
@@ -26,7 +26,7 @@ export const CardView = () => {
   const [card, setCard] = useState<Card>();
   const { getCardsByQuery, replaceSymbols } = useScryfall();
 
-  const getCard = (query: CardQuery) => {
+  const getCard = (query: CardQueryRequest) => {
     getCardsByQuery(query).then((cards) => {
       console.log({ cards });
       setCard(cards.data[0]);
