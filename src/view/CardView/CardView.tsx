@@ -79,7 +79,7 @@ export const CardView = () => {
               </>
             )}
             <StatLine
-              title={`${card.setName} (${card.set.toLocaleUpperCase()})`}
+              title={`${card.setName} (${card.set})`}
               value={`#${card.collectorNumber} | ${card.rarity.displayValue}`}
             />
             <Divider />

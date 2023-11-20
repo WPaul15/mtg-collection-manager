@@ -113,7 +113,7 @@ const CardSchema = z
   })
   .transform(camelize)
   .transform((card) => {
-    return { ...card, rarity: getEnumValue(card.rarity, Rarity) };
+    return { ...card, rarity: getEnumValue(card.rarity, Rarity), set: card.set.toLocaleUpperCase() };
   });
 
 type Card = z.infer<typeof CardSchema>;
