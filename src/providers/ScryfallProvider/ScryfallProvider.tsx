@@ -97,10 +97,8 @@ export const ScryfallProvider = ({ children }: PropsWithChildren<ScryfallProvide
   const getCardsByCollection = ({ ...body }: CardCollectionRequest): Promise<List<Card>> => {
     return request(ListSchema(CardSchema), {
       method: 'POST',
-      url: '/card/collection',
-      data: {
-        ...body,
-      },
+      url: '/cards/collection',
+      data: { ...body },
     });
   };
 

@@ -1,13 +1,13 @@
 import { Button } from 'primereact/button';
+import { Card as PRCard } from 'primereact/card';
 import { Divider } from 'primereact/divider';
 import { Image } from 'primereact/image';
 import { ReactNode, useState } from 'react';
 import { useScryfall } from '../../providers/ScryfallProvider';
-
-import { Card as PRCard } from 'primereact/card';
 import { Card } from '../../schema';
 import { CardQueryRequest } from '../../types/request';
-import styles from './CardView.module.css';
+
+import styles from './CardView.module.scss';
 
 interface StatLineProps {
   title: string;

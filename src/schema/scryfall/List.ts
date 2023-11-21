@@ -6,7 +6,7 @@ const ListSchema = <E extends ZodType>(dataSchema: E) =>
     .object({
       object: z.literal('list'),
       data: z.array(dataSchema),
-      has_more: z.boolean(),
+      has_more: z.boolean().nullish(),
       next_page: z.string().url().nullish(),
       total_cards: z.number().int().nullish(),
       warnings: z.array(z.string()).nullish(),

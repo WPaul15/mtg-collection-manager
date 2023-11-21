@@ -67,7 +67,7 @@ const CardSchema = z
     attraction_lights: z.array(z.number().int()).nullish(),
     booster: z.boolean(),
     border_color: BorderSchema,
-    card_back_id: z.string().uuid(),
+    card_back_id: z.string().uuid().nullish(),
     collector_number: z.string(),
     content_warning: z.boolean().nullish(),
     digital: z.boolean(),
