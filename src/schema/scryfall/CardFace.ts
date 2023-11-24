@@ -14,7 +14,7 @@ const CardFaceSchema = z
     defense: z.string().nullish(),
     flavor_text: z.string().nullish(),
     illustration_id: z.string().uuid().nullish(),
-    image_uris: z.record(ImageFormatSchema, z.string().url()).nullish(),
+    image_uris: z.record(ImageFormatSchema, z.string().url()).transform(camelize).nullish(),
     layout: LayoutSchema.nullish(),
     mana_cost: z.string().nullish(),
     name: z.string(),
