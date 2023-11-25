@@ -1,10 +1,13 @@
-interface CollectionEntry {
+interface CardCountMetadata {
   numRegular: number;
   numFoil: number;
 }
 
 interface Collection {
-  [key: string]: CollectionEntry;
+  name: string;
+  cards: {
+    [key: string]: CardCountMetadata;
+  };
 }
 
-export { type Collection, type CollectionEntry };
+export { type CardCountMetadata, type Collection };
