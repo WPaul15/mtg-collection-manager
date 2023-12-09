@@ -26,17 +26,7 @@ impl<TData> Repository<TData> for SurrealRepository<TData>
 where
     TData: std::marker::Sync + std::marker::Send + DeserializeOwned + Serialize,
 {
-    async fn query_all(&self) -> Vec<TData> {
-        let entities: Vec<TData> = self.db.select(self.table_name).await.unwrap();
-        entities
-    }
-
-    async fn query_by_id(&self, id: &str) -> Option<TData> {
-        let entity = self.db.select((self.table_name, id)).await.unwrap();
-        entity
-    }
-
-    async fn insert(&self, id: &str, data: TData) -> TData {
+    async fn create(&self, id: &str, data: TData) -> TData {
         let created = self
             .db
             .create((self.table_name, id))
@@ -45,6 +35,16 @@ where
             .unwrap()
             .unwrap();
         created
+    }
+
+    async fn get_all(&self) -> Vec<TData> {
+        let entities: Vec<TData> = self.db.select(self.table_name).await.unwrap();
+        entities
+    }
+
+    async fn get_by_id(&self, id: &str) -> Option<TData> {
+        let entity = self.db.select((self.table_name, id)).await.unwrap();
+        entity
     }
 
     async fn update(&self, id: &str, data: TData) -> TData {

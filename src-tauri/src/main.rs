@@ -3,7 +3,7 @@
 
 mod action_handler;
 mod actions;
-mod card_collection_service;
+mod collection_service;
 mod model;
 mod repository;
 mod surreal_respository;
@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use action_handler::ActionDispatcher;
-use card_collection_service::CardCollectionService;
+use collection_service::CollectionService;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use surreal_respository::SurrealRepository;
@@ -41,13 +41,13 @@ impl ApplicationContext {
             .unwrap();
 
         let repository = Box::new(SurrealRepository::new(Box::new(db), "collections"));
-        let card_collection_service = Arc::new(CardCollectionService::new(repository));
+        let card_collection_service = Arc::new(CollectionService::new(repository));
 
         let mut action_dispatchers: HashMap<String, Arc<dyn ActionDispatcher + Sync + Send>> =
             HashMap::new();
 
         action_dispatchers.insert(
-            actions::card_collection_actions::CARD_COLLECTION_DOMAIN.to_string(),
+            actions::collection_actions::COLLECTION_DOMAIN.to_string(),
             card_collection_service.clone(),
         );
 

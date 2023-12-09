@@ -1,1 +1,1 @@
-pub mod card_collection;
+pub mod collection;

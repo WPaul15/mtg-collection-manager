@@ -1,1 +1,1 @@
-pub mod card_collection_actions;
+pub mod collection_actions;

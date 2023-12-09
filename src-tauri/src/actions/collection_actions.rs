@@ -2,29 +2,29 @@ use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 use ts_rs::TS;
 
-pub const CARD_COLLECTION_DOMAIN: &str = "card_collection";
+pub const COLLECTION_DOMAIN: &str = "collection";
 
 #[derive(TS, Serialize, Deserialize)]
 #[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/CreateCardCollectionDto.ts")]
+#[ts(export_to = "../src/bindings/CreateCollectionDto.ts")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-pub struct CreateCardCollectionDto {
+pub struct CreateCollectionDto {
     pub name: String,
 }
 
 #[derive(TS, Serialize, Deserialize)]
 #[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/DeleteCardCollectionDto.ts")]
+#[ts(export_to = "../src/bindings/DeleteCollectionDto.ts")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-pub struct DeleteCardCollectionDto {
+pub struct DeleteCollectionDto {
     pub id: String,
 }
 
 #[derive(TS, Serialize, Deserialize)]
 #[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/CardCollectionDto.ts")]
+#[ts(export_to = "../src/bindings/CollectionDto.ts")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-pub struct CardCollectionDto {
+pub struct CollectionDto {
     pub id: String,
     pub name: String,
 }
@@ -36,14 +36,17 @@ pub struct CardCollectionDto {
     content = "payload"
 )]
 #[strum(serialize_all = "camelCase")]
-pub enum CardCollectionAction {
-    CreateCollection(CreateCardCollectionDto),
-    CardCollectionCreated(CardCollectionDto),
+pub enum CollectionAction {
+    CreateCollection(CreateCollectionDto),
+    CollectionCreated(CollectionDto),
+    CreateCollectionError,
     GetAllCollections,
-    AllCollectionsRead(Vec<CardCollectionDto>),
-    UpdateCollection(CardCollectionDto),
-    CardCollectionUpdated(CardCollectionDto),
-    DeleteCollection(DeleteCardCollectionDto),
-    CardCollectionDeleted(CardCollectionDto),
-    UpdateCardCollectionError,
+    AllCollectionsRead(Vec<CollectionDto>),
+    GetAllCollectionsError,
+    UpdateCollection(CollectionDto),
+    CollectionUpdated(CollectionDto),
+    UpdateCollectionError,
+    DeleteCollection(DeleteCollectionDto),
+    CollectionDeleted(CollectionDto),
+    DeleteCollectionError,
 }
