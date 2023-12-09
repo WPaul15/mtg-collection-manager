@@ -75,6 +75,20 @@ export const MainMenuView = () => {
           })
         }
       />
+      <Button
+        label="Delete Collection"
+        onClick={() =>
+          sendMessage({
+            domain: 'card_collection',
+            action: {
+              type: 'deleteCollection',
+              payload: {
+                id: collectionId,
+              },
+            },
+          })
+        }
+      />
     </div>
   );
 };

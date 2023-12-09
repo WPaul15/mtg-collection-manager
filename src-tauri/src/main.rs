@@ -18,7 +18,7 @@ use serde_json::Value;
 use surreal_respository::SurrealRepository;
 use surrealdb::engine::local::File;
 use surrealdb::Surreal;
-use tauri::{AppHandle, State};
+use tauri::State;
 
 #[derive(Deserialize, Serialize)]
 struct IpcMessage {
@@ -82,16 +82,3 @@ async fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-/*
-CardCollectionEntry {
-    card_id: "098c976b-6096-4ac7-8d52-2f219ae21d1f".to_string(),
-    num_regular: 0,
-    num_foil: 1,
-},
-CardCollectionEntry {
-    card_id: "ba16bfb3-dbd3-4b3a-b155-08b613268d57".to_string(),
-    num_regular: 0,
-    num_foil: 1,
-},
- */

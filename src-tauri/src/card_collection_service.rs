@@ -50,6 +50,10 @@ impl CardCollectionService {
         let id = card_collection._id.clone();
         self.repository.update(&id, card_collection).await
     }
+
+    pub async fn delete_collection_by_id(&self, id: &str) -> CardCollection {
+        self.repository.delete(id).await
+    }
 }
 
 #[async_trait]
@@ -92,6 +96,13 @@ impl ActionHandler<CardCollectionAction> for CardCollectionService {
                 CardCollectionAction::CardCollectionUpdated(CardCollectionDto {
                     id: card_collection._id,
                     name: card_collection.name,
+                })
+            }
+            CardCollectionAction::DeleteCollection(data) => {
+                let deleted = self.delete_collection_by_id(&data.id).await;
+                CardCollectionAction::CardCollectionDeleted(CardCollectionDto {
+                    id: deleted._id,
+                    name: deleted.name,
                 })
             }
             _ => CardCollectionAction::UpdateCardCollectionError,

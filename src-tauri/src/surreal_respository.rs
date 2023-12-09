@@ -31,6 +31,11 @@ where
         entities
     }
 
+    async fn query_by_id(&self, id: &str) -> Option<TData> {
+        let entity = self.db.select((self.table_name, id)).await.unwrap();
+        entity
+    }
+
     async fn insert(&self, id: &str, data: TData) -> TData {
         let created = self
             .db
@@ -53,8 +58,13 @@ where
         updated
     }
 
-    async fn query_by_id(&self, id: &str) -> Option<TData> {
-        let entity = self.db.select((self.table_name, id)).await.unwrap();
-        entity
+    async fn delete(&self, id: &str) -> TData {
+        let deleted = self
+            .db
+            .delete((self.table_name, id))
+            .await
+            .unwrap()
+            .unwrap();
+        deleted
     }
 }

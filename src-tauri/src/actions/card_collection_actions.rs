@@ -6,7 +6,7 @@ pub const CARD_COLLECTION_DOMAIN: &str = "card_collection";
 
 #[derive(TS, Serialize, Deserialize)]
 #[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/EditCardCollectionDto.ts")]
+#[ts(export_to = "../src/bindings/CreateCardCollectionDto.ts")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct CreateCardCollectionDto {
     pub name: String,
@@ -14,7 +14,15 @@ pub struct CreateCardCollectionDto {
 
 #[derive(TS, Serialize, Deserialize)]
 #[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/EditCardCollectionDto.ts")]
+#[ts(export_to = "../src/bindings/DeleteCardCollectionDto.ts")]
+#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
+pub struct DeleteCardCollectionDto {
+    pub id: String,
+}
+
+#[derive(TS, Serialize, Deserialize)]
+#[ts(export, rename_all = "camelCase")]
+#[ts(export_to = "../src/bindings/CardCollectionDto.ts")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct CardCollectionDto {
     pub id: String,
@@ -35,5 +43,7 @@ pub enum CardCollectionAction {
     AllCollectionsRead(Vec<CardCollectionDto>),
     UpdateCollection(CardCollectionDto),
     CardCollectionUpdated(CardCollectionDto),
+    DeleteCollection(DeleteCardCollectionDto),
+    CardCollectionDeleted(CardCollectionDto),
     UpdateCardCollectionError,
 }
