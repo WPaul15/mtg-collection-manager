@@ -36,13 +36,17 @@ impl CardCollectionService {
         new_card_collection
     }
 
+    pub async fn get_all_collections(&self) -> Vec<CardCollection> {
+        self.repository.query_all().await
+    }
+
     pub async fn get_collection_by_id(&self, id: &str) -> Option<CardCollection> {
         self.repository.query_by_id(id).await
     }
 
-    pub async fn update_collection_name(&self, id: &str, name: String) -> CardCollection {
-        let mut card_collection = self.repository.query_by_id(id).await.unwrap();
-        card_collection.name = name;
+    pub async fn update_collection_name(&self, id: &str, new_name: &str) -> CardCollection {
+        let mut card_collection = self.get_collection_by_id(id).await.unwrap();
+        card_collection.name = new_name.to_string();
         let id = card_collection._id.clone();
         self.repository.update(&id, card_collection).await
     }
@@ -63,16 +67,29 @@ impl ActionDispatcher for CardCollectionService {
 impl ActionHandler<CardCollectionAction> for CardCollectionService {
     async fn handle_action(&self, action: CardCollectionAction) -> CardCollectionAction {
         let response = match action {
-            CardCollectionAction::UpdateCollection(data) => {
-                let card_collection = self.update_collection_name(&data.id, data.name).await;
-                CardCollectionAction::CardCollectionUpdated(CardCollectionDto {
+            CardCollectionAction::CreateCollection(data) => {
+                let card_collection = self.create_new_collection(&data.name).await;
+                CardCollectionAction::CardCollectionCreated(CardCollectionDto {
                     id: card_collection._id,
                     name: card_collection.name,
                 })
             }
-            CardCollectionAction::CreateCollection(data) => {
-                let card_collection = self.create_new_collection(&data.name).await;
-                CardCollectionAction::CardCollectionCreated(CardCollectionDto {
+            CardCollectionAction::GetAllCollections => {
+                let card_collections = self.get_all_collections().await;
+
+                CardCollectionAction::AllCollectionsRead(
+                    card_collections
+                        .into_iter()
+                        .map(|c| CardCollectionDto {
+                            id: c._id,
+                            name: c.name,
+                        })
+                        .collect(),
+                )
+            }
+            CardCollectionAction::UpdateCollection(data) => {
+                let card_collection = self.update_collection_name(&data.id, &data.name).await;
+                CardCollectionAction::CardCollectionUpdated(CardCollectionDto {
                     id: card_collection._id,
                     name: card_collection.name,
                 })

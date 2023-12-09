@@ -3,23 +3,22 @@
 
 mod action_handler;
 mod actions;
-mod bonsai_repository;
 mod card_collection_service;
 mod model;
 mod repository;
+mod surreal_respository;
 
 use std::collections::HashMap;
 use std::sync::Arc;
 
 use action_handler::ActionDispatcher;
-use bonsai_repository::BonsaiRepository;
-use bonsaidb::local::config::{Builder, StorageConfiguration};
-use bonsaidb::local::AsyncDatabase;
 use card_collection_service::CardCollectionService;
-use model::card_collection::CardCollection;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use tauri::State;
+use surreal_respository::SurrealRepository;
+use surrealdb::engine::local::File;
+use surrealdb::Surreal;
+use tauri::{AppHandle, State};
 
 #[derive(Deserialize, Serialize)]
 struct IpcMessage {
@@ -33,13 +32,15 @@ struct ApplicationContext {
 
 impl ApplicationContext {
     async fn new() -> Self {
-        let db = AsyncDatabase::open::<CardCollection>(StorageConfiguration::new(
-            "testdb/card_collection.bonsaidb",
-        ))
-        .await
-        .unwrap();
-        let repository: Box<BonsaiRepository<CardCollection>> =
-            Box::new(BonsaiRepository::new(Box::new(db)));
+        let db = Surreal::new::<File>("testdb/surreal_test.db")
+            .await
+            .unwrap();
+        db.use_ns("mtg_collection_manager_ns")
+            .use_db("mtg_collection_manager_db")
+            .await
+            .unwrap();
+
+        let repository = Box::new(SurrealRepository::new(Box::new(db), "collections"));
         let card_collection_service = Arc::new(CardCollectionService::new(repository));
 
         let mut action_dispatchers: HashMap<String, Arc<dyn ActionDispatcher + Sync + Send>> =

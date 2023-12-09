@@ -31,6 +31,8 @@ pub struct CardCollectionDto {
 pub enum CardCollectionAction {
     CreateCollection(CreateCardCollectionDto),
     CardCollectionCreated(CardCollectionDto),
+    GetAllCollections,
+    AllCollectionsRead(Vec<CardCollectionDto>),
     UpdateCollection(CardCollectionDto),
     CardCollectionUpdated(CardCollectionDto),
     UpdateCardCollectionError,
