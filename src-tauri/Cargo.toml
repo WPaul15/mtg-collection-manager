@@ -16,6 +16,14 @@ tauri-build = { version = "1.5", features = [] }
 tauri = { version = "1.5", features = ["shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+bonsaidb = { version = "0.5.0", features = ["local-full"] }
+async-trait = "0.1.74"
+uuid = { version = "1.6.1", features = ["v4", "fast-rng"] }
+ts-rs = "7.0.0"
+strum = "0.25.0"
+strum_macros = "0.25.3"
+tokio = { version = "1.34.0", features = ["full"] }
+surrealdb = { version = "1.0.0", features = ["kv-rocksdb"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

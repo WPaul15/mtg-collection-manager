@@ -1,15 +1,96 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+mod action_handler;
+mod actions;
+mod bonsai_repository;
+mod card_collection_service;
+mod model;
+mod repository;
+
+use std::collections::HashMap;
+use std::sync::Arc;
+
+use action_handler::ActionDispatcher;
+use bonsai_repository::BonsaiRepository;
+use bonsaidb::local::config::{Builder, StorageConfiguration};
+use bonsaidb::local::AsyncDatabase;
+use card_collection_service::CardCollectionService;
+use model::card_collection::CardCollection;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use tauri::State;
+
+#[derive(Deserialize, Serialize)]
+struct IpcMessage {
+    domain: String,
+    action: Value,
 }
 
-fn main() {
+struct ApplicationContext {
+    action_dispatchers: HashMap<String, Arc<dyn ActionDispatcher + Sync + Send>>,
+}
+
+impl ApplicationContext {
+    async fn new() -> Self {
+        let db = AsyncDatabase::open::<CardCollection>(StorageConfiguration::new(
+            "testdb/card_collection.bonsaidb",
+        ))
+        .await
+        .unwrap();
+        let repository: Box<BonsaiRepository<CardCollection>> =
+            Box::new(BonsaiRepository::new(Box::new(db)));
+        let card_collection_service = Arc::new(CardCollectionService::new(repository));
+
+        let mut action_dispatchers: HashMap<String, Arc<dyn ActionDispatcher + Sync + Send>> =
+            HashMap::new();
+
+        action_dispatchers.insert(
+            actions::card_collection_actions::CARD_COLLECTION_DOMAIN.to_string(),
+            card_collection_service.clone(),
+        );
+
+        Self { action_dispatchers }
+    }
+}
+
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+#[tauri::command]
+async fn ipc_message(
+    message: IpcMessage,
+    context: State<'_, ApplicationContext>,
+) -> Result<IpcMessage, ()> {
+    let dispatcher = context.action_dispatchers.get(&message.domain).unwrap();
+    let response = dispatcher
+        .dispatch(message.domain.to_string(), message.action)
+        .await;
+
+    Ok(IpcMessage {
+        domain: message.domain,
+        action: response,
+    })
+}
+
+#[tokio::main]
+async fn main() {
+    let context = ApplicationContext::new().await;
+
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .manage(context)
+        .invoke_handler(tauri::generate_handler![ipc_message])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+/*
+CardCollectionEntry {
+    card_id: "098c976b-6096-4ac7-8d52-2f219ae21d1f".to_string(),
+    num_regular: 0,
+    num_foil: 1,
+},
+CardCollectionEntry {
+    card_id: "ba16bfb3-dbd3-4b3a-b155-08b613268d57".to_string(),
+    num_regular: 0,
+    num_foil: 1,
+},
+ */
