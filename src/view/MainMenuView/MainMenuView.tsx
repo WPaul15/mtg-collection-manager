@@ -36,7 +36,7 @@ export const MainMenuView = () => {
         label="Get All Collections"
         onClick={() =>
           sendMessage({
-            domain: 'card_collection',
+            domain: 'collection',
             action: {
               type: 'getAllCollections',
             },
@@ -49,11 +49,11 @@ export const MainMenuView = () => {
         label="Create Collection"
         onClick={() =>
           sendMessage({
-            domain: 'card_collection',
+            domain: 'collection',
             action: {
               type: 'createCollection',
               payload: {
-                name: 'Test Collection',
+                name: newName,
               },
             },
           })
@@ -64,7 +64,7 @@ export const MainMenuView = () => {
         label="Update Collection Name"
         onClick={() =>
           sendMessage({
-            domain: 'card_collection',
+            domain: 'collection',
             action: {
               type: 'updateCollection',
               payload: {
@@ -79,7 +79,7 @@ export const MainMenuView = () => {
         label="Delete Collection"
         onClick={() =>
           sendMessage({
-            domain: 'card_collection',
+            domain: 'collection',
             action: {
               type: 'deleteCollection',
               payload: {
