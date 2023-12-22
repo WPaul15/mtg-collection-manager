@@ -4,3 +4,5 @@ export enum CollectionAction {
   UPDATE = 'updateCollection',
   DELETE = 'deleteCollection',
 }
+
+export type Action = `${CollectionAction}`;

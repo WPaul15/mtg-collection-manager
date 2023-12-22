@@ -1,11 +1,11 @@
 import { invoke } from '@tauri-apps/api';
-import { CollectionAction } from '../../common/enum/CollectionAction';
+import { Action } from '../../common/enum/Action';
 import { Domain } from '../../common/enum/Domain';
 
 interface IpcMessage {
   domain: Domain;
   action: {
-    type: CollectionAction;
+    type: Action;
     payload?: any;
   };
 }

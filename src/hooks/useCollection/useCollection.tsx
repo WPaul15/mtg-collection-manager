@@ -1,7 +1,7 @@
 import { CollectionDto } from '../../bindings/CollectionDto';
 import { CreateCollectionDto } from '../../bindings/CreateCollectionDto';
 import { DeleteCollectionDto } from '../../bindings/DeleteCollectionDto';
-import { CollectionAction } from '../../common/enum/CollectionAction';
+import { CollectionAction } from '../../common/enum/Action';
 import { Domain } from '../../common/enum/Domain';
 import { useIpc } from '../useIpc';
 
