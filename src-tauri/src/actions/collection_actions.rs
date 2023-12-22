@@ -5,24 +5,21 @@ use ts_rs::TS;
 pub const COLLECTION_DOMAIN: &str = "collection";
 
 #[derive(TS, Serialize, Deserialize)]
-#[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/CreateCollectionDto.ts")]
+#[ts(export, export_to = "../src/bindings/CreateCollectionDto.ts", rename_all = "camelCase")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct CreateCollectionDto {
     pub name: String,
 }
 
 #[derive(TS, Serialize, Deserialize)]
-#[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/DeleteCollectionDto.ts")]
+#[ts(export, export_to = "../src/bindings/DeleteCollectionDto.ts", rename_all = "camelCase")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct DeleteCollectionDto {
     pub id: String,
 }
 
 #[derive(TS, Serialize, Deserialize)]
-#[ts(export, rename_all = "camelCase")]
-#[ts(export_to = "../src/bindings/CollectionDto.ts")]
+#[ts(export, export_to = "../src/bindings/CollectionDto.ts", rename_all = "camelCase")]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct CollectionDto {
     pub id: String,
