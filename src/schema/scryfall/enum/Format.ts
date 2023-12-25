@@ -4,6 +4,7 @@ enum Format {
   Standard = 'standard',
   Future = 'future',
   Historic = 'historic',
+  Timeless = 'timeless',
   Gladiator = 'gladiator',
   Pioneer = 'pioneer',
   Explorer = 'explorer',
