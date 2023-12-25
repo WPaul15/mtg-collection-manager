@@ -9,6 +9,7 @@ import 'primereact/resources/themes/soho-light/theme.css';
 import './main.scss';
 import { ScryfallProvider } from './providers/ScryfallProvider';
 import { routes } from './view';
+import { CollectionProvider } from './providers/CollectionProvider';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       }}
     >
       <ScryfallProvider>
-        <RouterProvider router={createBrowserRouter(Object.values(routes))} />
+        <CollectionProvider>
+          <RouterProvider router={createBrowserRouter(Object.values(routes))} />
+        </CollectionProvider>
       </ScryfallProvider>
     </PrimeReactProvider>
   </React.StrictMode>
