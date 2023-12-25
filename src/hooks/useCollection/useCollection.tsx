@@ -9,7 +9,7 @@ export const useCollection = () => {
   const { sendMessage } = useIpc();
 
   const createCollection = async (payload: CreateCollectionDto) => {
-    return await sendMessage({
+    return await sendMessage<CreateCollectionDto, CollectionDto>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.CREATE,
@@ -19,7 +19,7 @@ export const useCollection = () => {
   };
 
   const getAllCollections = async () => {
-    return await sendMessage({
+    return await sendMessage<undefined, CollectionDto[]>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.GET_ALL,
@@ -28,7 +28,7 @@ export const useCollection = () => {
   };
 
   const updateCollection = async (payload: CollectionDto) => {
-    return await sendMessage({
+    return await sendMessage<CollectionDto, CollectionDto>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.UPDATE,
@@ -38,7 +38,7 @@ export const useCollection = () => {
   };
 
   const deleteCollection = async (payload: DeleteCollectionDto) => {
-    return await sendMessage({
+    return await sendMessage<DeleteCollectionDto, CollectionDto>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.DELETE,

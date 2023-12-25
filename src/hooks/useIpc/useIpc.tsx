@@ -2,26 +2,21 @@ import { invoke } from '@tauri-apps/api';
 import { Action } from '../../common/enum/Action';
 import { Domain } from '../../common/enum/Domain';
 
-interface IpcMessage {
+interface IpcMessage<T> {
   domain: Domain;
   action: {
     type: Action;
-    payload?: any;
+    payload?: T;
   };
 }
 
 export const useIpc = () => {
-  const sendMessage = async (message: IpcMessage): Promise<string> => {
-    const response = await invoke<IpcMessage>('ipc_message', {
+  const sendMessage = async <T, R>(message: IpcMessage<T>): Promise<R> => {
+    const response = await invoke<IpcMessage<T>>('ipc_message', {
       message,
     });
-    console.log({ response });
 
-    if (Array.isArray(response.action.payload)) {
-      return Promise.resolve(response.action.payload[0].id);
-    }
-
-    return Promise.resolve(response.action.payload.id);
+    return Promise.resolve<R>(response.action.payload as R);
   };
 
   return { sendMessage };
