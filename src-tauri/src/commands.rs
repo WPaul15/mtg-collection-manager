@@ -1,7 +1,14 @@
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use tauri::{Manager, State, Window};
 
 use crate::ApplicationContext;
-use crate::IpcMessage;
+
+#[derive(Deserialize, Serialize)]
+pub struct IpcMessage {
+    domain: String,
+    action: Value,
+}
 
 #[tauri::command]
 pub async fn close_splash_screen(window: Window) {

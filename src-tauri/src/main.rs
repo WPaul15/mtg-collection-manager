@@ -14,23 +14,23 @@ use action_handler::ActionDispatcher;
 use application_context::ApplicationContext;
 use collection_service::CollectionService;
 use commands::{close_splash_screen, ipc_message};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use surreal_respository::SurrealRepository;
-
-#[derive(Deserialize, Serialize)]
-struct IpcMessage {
-    domain: String,
-    action: Value,
-}
+use tauri::Manager;
 
 #[tokio::main]
 async fn main() {
-    let context = ApplicationContext::new().await;
-
     tauri::Builder::default()
-        .manage(context)
         .invoke_handler(tauri::generate_handler![close_splash_screen, ipc_message])
+        .setup(|app| {
+            let handle = app.handle();
+
+            tauri::async_runtime::spawn(async move {
+                let context = ApplicationContext::new().await;
+                handle.manage(context);
+            });
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -30,7 +30,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "mtg-collection-manager",
+        "title": "MTG Collection Manager",
         "width": 800,
         "height": 600,
         "visible": false
@@ -38,6 +38,7 @@
       {
         "width": 400,
         "height": 200,
+        "resizable": false,
         "decorations": false,
         "url": "splash-screen.html",
         "label": "splash-screen"
