@@ -4,7 +4,7 @@ import { CreateCollectionDto } from '../../bindings/CreateCollectionDto';
 import { DeleteCollectionDto } from '../../bindings/DeleteCollectionDto';
 import { CollectionAction } from '../../common/enum/Action';
 import { Domain } from '../../common/enum/Domain';
-import { useIpc } from '../../hooks/useIpc';
+import { useTauriCommand } from '../../hooks/useTauriCommand';
 
 interface CollectionState {
   collections: string[];
@@ -28,7 +28,7 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   const [collections, setCollections] = useState<string[]>([]);
   const [activeCollection, setActiveCollection] = useState<string>('');
 
-  const { sendMessage } = useIpc();
+  const { closeSplashScreen, sendMessage } = useTauriCommand();
 
   const createCollection = async (payload: CreateCollectionDto) => {
     return await sendMessage<CreateCollectionDto, CollectionDto>({
@@ -72,6 +72,7 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   useEffect(() => {
     getAllCollections().then((res) => {
       setCollections(res.map((c) => c.id));
+      closeSplashScreen();
     });
   }, []);
 

@@ -7,8 +7,7 @@ import { useCollection } from '../../providers/CollectionProvider';
 
 export const MainMenuView = () => {
   const [newName, setNewName] = useState<string>('');
-  const [collectionId, setCollectionId] = useState<string>('');
-  const { createCollection, updateCollection, deleteCollection } = useCollection();
+  const { activeCollection, createCollection, updateCollection, deleteCollection } = useCollection();
 
   return (
     <div className="flex flex-column gap-3">
@@ -20,12 +19,12 @@ export const MainMenuView = () => {
         label="Update Collection Name"
         onClick={() =>
           updateCollection({
-            id: collectionId,
+            id: activeCollection,
             name: newName,
           })
         }
       />
-      <Button label="Delete Collection" onClick={() => deleteCollection({ id: collectionId })} />
+      <Button label="Delete Collection" onClick={() => deleteCollection({ id: activeCollection })} />
     </div>
   );
 };

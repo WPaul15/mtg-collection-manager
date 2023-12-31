@@ -10,7 +10,11 @@ interface IpcMessage<T> {
   };
 }
 
-export const useIpc = () => {
+export const useTauriCommand = () => {
+  const closeSplashScreen = async () => {
+    await invoke('close_splash_screen');
+  };
+
   const sendMessage = async <T, R>(message: IpcMessage<T>): Promise<R> => {
     const response = await invoke<IpcMessage<T>>('ipc_message', {
       message,
@@ -19,5 +23,5 @@ export const useIpc = () => {
     return Promise.resolve<R>(response.action.payload as R);
   };
 
-  return { sendMessage };
+  return { closeSplashScreen, sendMessage };
 };
