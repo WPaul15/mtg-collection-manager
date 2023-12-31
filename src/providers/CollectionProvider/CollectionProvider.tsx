@@ -28,7 +28,7 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   const [collections, setCollections] = useState<string[]>([]);
   const [activeCollection, setActiveCollection] = useState<string>('');
 
-  const { closeSplashScreen, sendMessage } = useTauriCommand();
+  const { sendMessage } = useTauriCommand();
 
   const createCollection = async (payload: CreateCollectionDto) => {
     return await sendMessage<CreateCollectionDto, CollectionDto>({
@@ -72,7 +72,6 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   useEffect(() => {
     getAllCollections().then((res) => {
       setCollections(res.map((c) => c.id));
-      closeSplashScreen();
     });
   }, []);
 
