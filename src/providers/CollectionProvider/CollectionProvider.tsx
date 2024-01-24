@@ -7,9 +7,11 @@ import { Domain } from '../../common/enum/Domain';
 import { useTauriCommand } from '../../hooks/useTauriCommand';
 
 interface CollectionState {
-  collections: string[];
-  activeCollection: string;
-  setActiveCollection: Dispatch<SetStateAction<string>>;
+  collections: {
+    [key: string]: CollectionDto;
+  };
+  activeCollection?: CollectionDto;
+  setActiveCollection: Dispatch<SetStateAction<CollectionDto | undefined>>;
   createCollection: (payload: CreateCollectionDto) => Promise<CollectionDto>;
   getAllCollections: () => Promise<CollectionDto[]>;
   updateCollection: (payload: CollectionDto) => Promise<CollectionDto>;
@@ -25,19 +27,26 @@ export const useCollection = () => {
 interface CollectionProviderProps {}
 
 export const CollectionProvider = ({ children }: PropsWithChildren<CollectionProviderProps>) => {
-  const [collections, setCollections] = useState<string[]>([]);
-  const [activeCollection, setActiveCollection] = useState<string>('');
+  const [collections, setCollections] = useState<{ [key: string]: CollectionDto }>({});
+  const [activeCollection, setActiveCollection] = useState<CollectionDto>();
 
   const { sendMessage } = useTauriCommand();
 
   const createCollection = async (payload: CreateCollectionDto) => {
-    return await sendMessage<CreateCollectionDto, CollectionDto>({
+    const newCollection = await sendMessage<CreateCollectionDto, CollectionDto>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.CREATE,
         payload,
       },
     });
+
+    setCollections((c) => {
+      c[newCollection.id] = newCollection;
+      return c;
+    });
+
+    return newCollection;
   };
 
   const getAllCollections = async () => {
@@ -50,13 +59,20 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   };
 
   const updateCollection = async (payload: CollectionDto) => {
-    return await sendMessage<CollectionDto, CollectionDto>({
+    const updatedCollection = await sendMessage<CollectionDto, CollectionDto>({
       domain: Domain.Collection,
       action: {
         type: CollectionAction.UPDATE,
         payload,
       },
     });
+
+    setCollections((c) => {
+      c[updatedCollection.id] = updatedCollection;
+      return c;
+    });
+
+    return updatedCollection;
   };
 
   const deleteCollection = async (payload: DeleteCollectionDto) => {
@@ -70,8 +86,14 @@ export const CollectionProvider = ({ children }: PropsWithChildren<CollectionPro
   };
 
   useEffect(() => {
-    getAllCollections().then((res) => {
-      setCollections(res.map((c) => c.id));
+    getAllCollections().then((collections) => {
+      const records: { [key: string]: CollectionDto } = {};
+
+      collections.forEach((collection) => {
+        records[collection.id] = collection;
+      });
+
+      setCollections(records);
     });
   }, []);
 
