@@ -23,6 +23,7 @@ enum Format {
   OldSchool = 'oldschool',
   PreModern = 'premodern',
   Predh = 'predh',
+  StandardBrawl = 'standardbrawl',
 }
 
 const FormatSchema = z.nativeEnum(Format);
