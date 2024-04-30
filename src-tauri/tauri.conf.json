@@ -20,14 +20,8 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
+      "identifier": "com.wpaul15.mtg-collection-manager",
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
     },
     "security": {
       "csp": null
@@ -36,9 +30,18 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "mtg-collection-manager",
+        "title": "MTG Collection Manager",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "visible": false
+      },
+      {
+        "width": 400,
+        "height": 200,
+        "resizable": false,
+        "decorations": false,
+        "url": "splash-screen.html",
+        "label": "splash-screen"
       }
     ]
   }

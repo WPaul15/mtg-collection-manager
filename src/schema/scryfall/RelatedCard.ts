@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { RelatedCard } from '..';
 import camelize from '../camelize';
 import { ComponentSchema } from './enum/Component';
 
